@@ -25,3 +25,6 @@ models/*.pkl
 # OS files
 .DS_Store
 Thumbs.db
+
+# Generated prediction logs
+monitoring/predictions.csv
