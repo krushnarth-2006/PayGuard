@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from api.schemas import Transaction, PredictionResponse
+from src.risk_engine import get_risk_level
+
 
 app = FastAPI(
     title="PayGuard API",
@@ -8,13 +10,6 @@ app = FastAPI(
 )
 
 
-# Transaction input format
-class Transaction(BaseModel):
-    amount: float
-    transaction_type: str
-
-
-# Home endpoint
 @app.get("/")
 def root():
     return {
@@ -22,26 +17,21 @@ def root():
     }
 
 
-# Fraud prediction endpoint
-@app.post("/predict")
+@app.post("/predict", response_model=PredictionResponse)
 def predict(transaction: Transaction):
 
     # Temporary dummy probability
-    # We will replace this with the real ML model later.
+    # This will later be replaced by Krushnarth's ML model.
     fraud_probability = 0.85
 
-    # Risk classification
-    if fraud_probability >= 0.70:
+    # Get risk level from the risk engine
+    risk_level = get_risk_level(fraud_probability)
+
+    # Determine prediction
+    if fraud_probability >= 0.50:
         prediction = "FRAUD"
-        risk_level = "HIGH"
-
-    elif fraud_probability >= 0.30:
-        prediction = "LEGITIMATE"
-        risk_level = "MEDIUM"
-
     else:
         prediction = "LEGITIMATE"
-        risk_level = "LOW"
 
     return {
         "fraud_probability": fraud_probability,
