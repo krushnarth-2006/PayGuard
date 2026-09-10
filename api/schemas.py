@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from typing import Any
+from pydantic import BaseModel, ConfigDict
 
 
 class Transaction(BaseModel):
-    amount: float
-    transaction_type: str
+    model_config = ConfigDict(extra="allow")
 
 
 class PredictionResponse(BaseModel):
