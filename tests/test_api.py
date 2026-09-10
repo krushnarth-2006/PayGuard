@@ -1,8 +1,19 @@
+from pathlib import Path
+import json
+
 from fastapi.testclient import TestClient
 from api.main import app
 
 
 client = TestClient(app)
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+SAMPLE_REQUEST_FILE = BASE_DIR / "models" / "sample_api_request.json"
+
+
+def load_sample_request():
+    with open(SAMPLE_REQUEST_FILE, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 def test_root():
@@ -13,12 +24,11 @@ def test_root():
 
 
 def test_predict_valid_transaction():
+    sample_request = load_sample_request()
+
     response = client.post(
         "/predict",
-        json={
-            "amount": 5000.0,
-            "transaction_type": "TRANSFER"
-        }
+        json=sample_request
     )
 
     assert response.status_code == 200
@@ -30,25 +40,26 @@ def test_predict_valid_transaction():
     assert "risk_level" in data
 
     assert 0 <= data["fraud_probability"] <= 1
+    assert data["prediction"] in ["FRAUD", "LEGITIMATE"]
+    assert data["risk_level"] in ["LOW", "MEDIUM", "HIGH"]
 
 
-def test_predict_missing_amount():
+def test_predict_missing_required_features():
     response = client.post(
         "/predict",
         json={
-            "transaction_type": "TRANSFER"
+            "TransactionAmt": 68.5,
+            "ProductCD": "W"
         }
     )
 
     assert response.status_code == 422
 
 
-def test_predict_missing_transaction_type():
+def test_predict_empty_transaction():
     response = client.post(
         "/predict",
-        json={
-            "amount": 5000.0
-        }
+        json={}
     )
 
     assert response.status_code == 422
