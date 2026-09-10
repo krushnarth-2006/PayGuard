@@ -1,7 +1,4 @@
 def get_risk_level(fraud_probability: float) -> str:
-    """
-    Convert fraud probability into a risk level.
-    """
 
     if fraud_probability >= 0.70:
         return "HIGH"
