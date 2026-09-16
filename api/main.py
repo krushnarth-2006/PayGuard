@@ -1,5 +1,8 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from api.schemas import Transaction, PredictionResponse
+from api.auth import init_auth_db, create_admin_if_needed
+from api.auth_routes import router as auth_router
 from src.risk_engine import get_risk_level
 
 from datetime import datetime
@@ -18,6 +21,19 @@ app = FastAPI(
     description="Real-Time Digital Payment Fraud Detection API",
     version="1.0.0"
 )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+init_auth_db()
+create_admin_if_needed()
+app.include_router(auth_router)
 
 
 # ---------------------------------------------------------

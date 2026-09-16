@@ -28,3 +28,9 @@ Thumbs.db
 
 # Generated prediction logs
 monitoring/predictions.csv
+
+# Authentication database
+data/*.db
+# Frontend dependencies and build
+frontend/node_modules/
+frontend/dist/
