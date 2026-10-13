@@ -30,7 +30,7 @@ export const SAMPLE_TRANSACTION_INPUT = {
 
 // Single source of truth for risk thresholds — keep in sync with the
 // eventual PayGuard backend's display conventions.
-export const RISK_THRESHOLDS = { LOW_MAX: 0.3, MEDIUM_MAX: 0.7 };
+export const RISK_THRESHOLDS = { LOW_MAX: 0.3, MEDIUM_MAX: 0.85 };
 
 export function riskLevelFromProbability(p) {
   if (p >= RISK_THRESHOLDS.MEDIUM_MAX) return "HIGH";

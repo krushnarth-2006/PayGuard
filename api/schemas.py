@@ -1,5 +1,5 @@
 from typing import Any
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Transaction(BaseModel):
@@ -10,6 +10,30 @@ class PredictionResponse(BaseModel):
     fraud_probability: float
     prediction: str
     risk_level: str
+
+
+# ---------------------------------------------------------
+# Customer payment transaction
+# Used by the frontend payment-check flow.
+# ---------------------------------------------------------
+
+class PaymentTransactionRequest(BaseModel):
+    amount: float = Field(gt=0)
+    category: str
+    paymentMethod: str
+    deviceType: str
+    emailDomain: str
+    distanceKm: float = Field(default=0, ge=0)
+    merchant: str
+    isNewRecipient: str
+
+
+class PaymentTransactionResponse(BaseModel):
+    transaction_id: str
+    fraud_probability: float
+    prediction: str
+    risk_level: str
+    decision: str
 
 
 class RegisterRequest(BaseModel):
